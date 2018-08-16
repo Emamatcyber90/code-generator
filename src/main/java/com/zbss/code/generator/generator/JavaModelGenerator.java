@@ -8,11 +8,9 @@ import com.zbss.code.generator.config.Const;
 import com.zbss.code.generator.plugins.Plugin;
 import com.zbss.code.generator.table.TableColumn;
 import com.zbss.code.generator.table.TableInfo;
-import com.zbss.code.generator.util.FileUtils;
 import com.zbss.code.generator.util.ObjectUtils;
-import com.zbss.code.generator.util.PathUtils;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -27,7 +25,7 @@ public class JavaModelGenerator extends Generator {
     }
 
     @Override
-    public void generateFile() {
+    public void generateFile() throws Exception {
         for (TableInfo tableInfo : config.getTableInfoList()) {
             CompilationUnit cu = new CompilationUnit();
             String pkg = conf.getJSONObject("model").getString("targetPackage");
@@ -44,34 +42,27 @@ public class JavaModelGenerator extends Generator {
     }
 
     @Override
-    public void mergeFile() {
+    public void mergeFile() throws Exception {
         if (!conf.getBoolean("isJavaMerge")) {
             return;
         }
     }
 
     @Override
-    public void writeFile() {
+    public void writeFile() throws Exception {
+        String targetPkg = conf.getJSONObject("model").getString("targetPackage");
+        String targetPrj = conf.getJSONObject("model").getString("targetProject");
+        File dir = getDirectory(targetPrj, targetPkg);
         for (TableInfo tableInfo : config.getTableInfoList()) {
             CompilationUnit cu = tableInfo.getModelCompilationUnit();
             if (ObjectUtils.isEmpty(cu)) {
                 continue;
             }
-            String modelPath = tableInfo.getModelConfig().getString("targetPackage");
-            String filePath = null;
-            try {
-                filePath = PathUtils.getClassPath() + modelPath.replaceAll("\\.", "\\/") + "/" + tableInfo.getDomainName() + ".java";
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println(filePath);
-            String fileContent = cu.toString();
+
+            File targetFile = new File(dir, tableInfo.getDomainName() + ".java");
             String fileEncoding = ObjectUtils.isEmpty(conf.getString("outputFileEncoding")) ? "utf-8" : conf.getString("outputFileEncoding");
-            try {
-                FileUtils.writeFile(filePath, fileContent, fileEncoding);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String fileContent = cu.toString();
+            writeFile(targetFile, fileContent, fileEncoding);
         }
     }
 

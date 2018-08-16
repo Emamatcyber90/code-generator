@@ -5,12 +5,10 @@ import com.zbss.code.generator.config.Config;
 import com.zbss.code.generator.config.Const;
 import com.zbss.code.generator.plugins.Plugin;
 import com.zbss.code.generator.table.TableInfo;
-import com.zbss.code.generator.util.FileUtils;
 import com.zbss.code.generator.util.ObjectUtils;
-import com.zbss.code.generator.util.PathUtils;
 import com.zbss.code.generator.util.StringUtils;
 
-import java.io.IOException;
+import java.io.File;
 
 /**
  * @author zbss
@@ -49,21 +47,20 @@ public class JavaMapperGenerator extends Generator {
     }
 
     @Override
-    public void writeFile() {
+    public void writeFile() throws Exception {
+        String targetPkg = conf.getJSONObject("mapper").getString("targetPackage");
+        String targetPrj = conf.getJSONObject("mapper").getString("targetProject");
+        File dir = getDirectory(targetPrj, targetPkg);
         for (TableInfo tableInfo : config.getTableInfoList()) {
             CompilationUnit cu = tableInfo.getMapperCompilationUnit();
             if (ObjectUtils.isEmpty(cu)) {
                 continue;
             }
-            String mapperPath = tableInfo.getMapperConfig().getString("targetPackage");
-            String filePath = PathUtils.getClassPath() + mapperPath.replaceAll("\\.", "\\/") + "/" + tableInfo.getMapperName() + ".java";
-            String fileContent = cu.toString();
+
+            File targetFile = new File(dir, tableInfo.getMapperName() + ".java");
             String fileEncoding = ObjectUtils.isEmpty(conf.getString("outputFileEncoding")) ? "utf-8" : conf.getString("outputFileEncoding");
-            try {
-                FileUtils.writeFile(filePath, fileContent, fileEncoding);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String fileContent = cu.toString();
+            writeFile(targetFile, fileContent, fileEncoding);
         }
     }
 

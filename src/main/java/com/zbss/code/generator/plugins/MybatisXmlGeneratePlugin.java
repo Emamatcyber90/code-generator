@@ -69,7 +69,5 @@ public class MybatisXmlGeneratePlugin extends PluginAdapter {
         sqlEle.addComment(Const.XML_COMMENT);
         sqlEle.addText(System.lineSeparator());
         sqlEle.addText("        " + columns);
-
-        System.out.println(tableInfo.getXmlDocument().asXML());
     }
 }

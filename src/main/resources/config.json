@@ -12,16 +12,19 @@
   "beginningDelimiter": "`",
   "endingDelimiter": "`",
   "model": {
-    "targetPackage": "com.zbss.model"
+    "targetPackage": "com.zbss.model",
+    "targetProject":"test"
   },
   "mapper": {
     "targetPackage": "com.zbss.mapper",
+    "targetProject":"test",
     "properties":{
       "suffix":""
     }
   },
   "xml": {
-    "targetPackage": "mapper"
+    "targetPackage": "mapper",
+    "targetProject":"test"
   },
   "tables": [
     {

@@ -11,6 +11,7 @@ import com.zbss.code.generator.util.FileUtils;
 import com.zbss.code.generator.util.StringUtils;
 import com.zbss.code.generator.util.Utils;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -25,13 +26,13 @@ import java.util.List;
 public class Config {
 
     private static volatile Config instance;
-    private String configPath;
     private JSONObject config;
     private List<Plugin> pluginList = new ArrayList<>();
     private List<TableInfo> tableInfoList = new ArrayList<>();
+    private File configFile;
 
-    private Config(String path) {
-        this.configPath = path;
+    private Config(File file) {
+        this.configFile = file;
         try {
             initConfig();
             initTable();
@@ -43,12 +44,12 @@ public class Config {
 
     private void initConfig() throws Exception {
         String configStr = null;
-        if (configPath == null || "".equals(configPath)) {
-            configPath = "config.json";
-            configStr = FileUtils.readFileFromClasspath(configPath);
+        if (configFile == null) {
+            configStr = FileUtils.readFileFromClasspath("config.json");
         } else {
-            configStr = FileUtils.readFile(configPath);
+            configStr = FileUtils.readFile(configFile);
         }
+
         config = JSON.parseObject(configStr);
     }
 
@@ -134,11 +135,11 @@ public class Config {
         return tableInfoList;
     }
 
-    public static Config getInstance(String path) {
+    public static Config getInstance(File file) {
         if (instance == null) {
             synchronized (Config.class) {
                 if (instance == null) {
-                    instance = new Config(path);
+                    instance = new Config(file);
                 }
             }
         }

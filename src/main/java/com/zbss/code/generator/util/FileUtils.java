@@ -22,6 +22,16 @@ public class FileUtils {
     }
 
     /**
+     * @param file
+     * @return
+     * @throws Exception
+     * @desc 读取绝对路径文件
+     */
+    public static String readFile(File file) throws Exception {
+        return readFile(file, CHAESET);
+    }
+
+    /**
      * @param filePath 文件路径
      * @param charset  读取编码
      * @return
@@ -33,6 +43,28 @@ public class FileUtils {
             charset = CHAESET;
         }
         FileInputStream in = new FileInputStream(new File(filePath));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, charset));
+        StringBuffer sb = new StringBuffer();
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        br.close();
+        return sb.toString();
+    }
+
+    /**
+     * @param file 文件路径
+     * @param charset  读取编码
+     * @return
+     * @throws IOException
+     * @desc 读取文件
+     */
+    public static String readFile(File file, String charset) throws IOException {
+        if (charset == null || "".equals(charset)) {
+            charset = CHAESET;
+        }
+        FileInputStream in = new FileInputStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(in, charset));
         StringBuffer sb = new StringBuffer();
         String line = null;
@@ -73,11 +105,10 @@ public class FileUtils {
      * @desc 从classpath读取文件
      */
     public static String readFileFromClasspath(String filePath) throws Exception {
-        String classpath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-        if (classpath.contains(":")) {
-            classpath = classpath.substring(1);
-        }
-        return readFile(classpath + filePath, CHAESET);
+        InputStream stream = FileUtils.class.getClassLoader().getResourceAsStream(filePath);
+        File targetFile = new File(filePath);
+        org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, targetFile);
+        return readFile(targetFile, CHAESET);
     }
 
     /**
