@@ -1,0 +1,68 @@
+{
+  "jdbc": {
+    "driver": "com.mysql.jdbc.Driver",
+    "url": "jdbc:mysql://localhost:3306/travel_qihang_lcc?useUnicode=true&characterEncoding=UTF-8",
+    "user": "root",
+    "pwd": "root"
+  },
+  "outputFileEncoding": "utf-8",
+  "isXmlMerge": false,
+  "isJavaMerge": true,
+  "autoDelimitKeywords": false,
+  "beginningDelimiter": "`",
+  "endingDelimiter": "`",
+  "model": {
+    "targetPackage": "com.zbss.model"
+  },
+  "mapper": {
+    "targetPackage": "com.zbss.mapper",
+    "properties":{
+      "suffix":""
+    }
+  },
+  "xml": {
+    "targetPackage": "mapper"
+  },
+  "tables": [
+    {
+      "tableName": "carrier_ticket_channel",
+      "domainName": "CarrierTicketChannel"
+    },
+    {
+      "tableName": "config_airline",
+      "domainName": "ConfigAirline"
+    }
+  ],
+  "plugins": [
+    {
+      "className": "com.zbss.code.generator.plugins.MybatisXmlGeneratePlugin",
+      "properties": {
+        "hello": "123"
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.plugins.GetterAndSetterPlugin",
+      "properties": {
+        "hello": "123"
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.plugins.CommentPlugin",
+      "properties": {
+        "hello": "123"
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.plugins.JPAPlugin",
+      "properties": {
+        "hello": "123"
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.plugins.CommonMapperPlugin",
+      "properties": {
+        "hello": "123"
+      }
+    }
+  ]
+}
