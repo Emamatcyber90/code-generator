@@ -89,7 +89,7 @@
     {
       /*实体生成器*/
       "className": "com.zbss.code.generator.generator.ModelGenerator",
-      "order": 0,
+      "order": 0,/*执行顺序*/
       "properties": {
       }
     },
@@ -111,13 +111,15 @@
   /*插件*/
   "plugins": [
     {
+      /*生成getter和setter方法插件*/
       "className": "com.zbss.code.generator.plugins.GetterAndSetterPlugin",
-      "order": 0,
-      "properties": {
+      "order": 0,/*执行顺序*/
+      "properties": {/*自定义属性*/
         "hello": "123"
       }
     },
     {
+      /*生成JPA注解插件*/
       "className": "com.zbss.code.generator.plugins.JPAPlugin",
       "order": 1,
       "properties": {
@@ -125,6 +127,7 @@
       }
     },
     {
+      /*通用mapper插件*/
       "className": "com.zbss.code.generator.plugins.CommonMapperPlugin",
       "order": 2,
       "properties": {
@@ -132,6 +135,7 @@
       }
     },
     {
+      /*mybatis xml 插件*/
       "className": "com.zbss.code.generator.plugins.MybatisXmlGeneratePlugin",
       "order": 3,
       "properties": {
@@ -139,6 +143,7 @@
       }
     },
     {
+      /*添加注释插件*/
       "className": "com.zbss.code.generator.plugins.CommentPlugin",
       "order": 9999,
       "properties": {
