@@ -21,12 +21,11 @@ public class ModelGenerator extends FileGenerator {
 
     @Override
     public void generateFile() throws Exception {
-        String targetPkg = config.getJsonConfig().getJSONObject("model").getString("targetPackage");
-        String targetPrj = config.getJsonConfig().getJSONObject("model").getString("targetProject");
+        String targetPkg = jsonConfig.getJSONObject("model").getString("targetPackage");
+        String targetPrj = jsonConfig.getJSONObject("model").getString("targetProject");
         for (TableInfo tableInfo : config.getTableInfoList()) {
             CompilationUnit cu = new CompilationUnit();
-            String pkg = jsonConfig.getJSONObject("model").getString("targetPackage");
-            cu.setPackageDeclaration(pkg);
+            cu.setPackageDeclaration(targetPkg);
             ClassOrInterfaceDeclaration type = cu.addClass(tableInfo.getDomainName());
             List<TableColumn> columnList = tableInfo.getActualColumns();
             for (TableColumn actualColumn : columnList) {

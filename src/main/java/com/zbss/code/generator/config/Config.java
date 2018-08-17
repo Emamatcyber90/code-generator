@@ -3,12 +3,15 @@ package com.zbss.code.generator.config;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zbss.code.generator.generator.FileGenerator;
-import com.zbss.code.generator.jdbc.Jdbc;
-import com.zbss.code.generator.plugins.Plugin;
 import com.zbss.code.generator.entity.TableColumn;
 import com.zbss.code.generator.entity.TableInfo;
+import com.zbss.code.generator.generator.FileGenerator;
+import com.zbss.code.generator.jdbc.Jdbc;
+import com.zbss.code.generator.merge.FileMerger;
+import com.zbss.code.generator.merge.Merger;
+import com.zbss.code.generator.plugins.Plugin;
 import com.zbss.code.generator.util.FileUtils;
+import com.zbss.code.generator.util.ObjectUtils;
 import com.zbss.code.generator.util.StringUtils;
 import com.zbss.code.generator.util.Utils;
 
@@ -29,22 +32,20 @@ import java.util.List;
 public class Config {
 
     private static volatile Config instance;
-    private JSONObject jsonConfig;
-    private List<Plugin> pluginList = new ArrayList<>();
-    private List<FileGenerator> generatorList = new ArrayList<>();
-    private List<TableInfo> tableInfoList = new ArrayList<>();
-    private File configFile;
+    private JSONObject jsonConfig;                                  // 配置文件的json格式
+    private List<Plugin> pluginList = new ArrayList<>();            // 插件
+    private List<FileGenerator> generatorList = new ArrayList<>();  // 文件生成器
+    private List<TableInfo> tableInfoList = new ArrayList<>();      // 单表信息，包含需要生成的各种信息
+    private File configFile;                                        // 配置文件
+    private Merger merger;                                          // 合并器，合并文件用到
 
-    private Config(File file) {
+    private Config(File file) throws Exception {
         this.configFile = file;
-        try {
-            initConfig();
-            initTable();
-            initGenerator();
-            initPlugin();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        initConfig();
+        initTable();
+        initGenerator();
+        initPlugin();
+        initMerger();
     }
 
     private void initConfig() throws Exception {
@@ -157,6 +158,15 @@ public class Config {
         }
     }
 
+    private void initMerger() throws Exception {
+        String mergerClassName = jsonConfig.getString("merger");
+        if (ObjectUtils.isNotEmpty(mergerClassName)) {
+            merger = (Merger) Class.forName(mergerClassName).newInstance();
+        } else {
+            merger = new FileMerger();
+        }
+    }
+
     public JSONObject getJsonConfig() {
          return jsonConfig;
     }
@@ -173,11 +183,11 @@ public class Config {
         return generatorList;
     }
 
-    public void setGeneratorList(List<FileGenerator> generatorList) {
-        this.generatorList = generatorList;
+    public Merger getMerger() {
+        return merger;
     }
 
-    public static Config getInstance(File file) {
+    public static Config getInstance(File file) throws Exception {
         if (instance == null) {
             synchronized (Config.class) {
                 if (instance == null) {
@@ -188,7 +198,7 @@ public class Config {
         return instance;
     }
 
-    public static Config getInstance() {
+    public static Config getInstance() throws Exception {
         if (instance == null) {
             synchronized (Config.class) {
                 if (instance == null) {

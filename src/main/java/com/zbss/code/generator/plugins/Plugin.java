@@ -12,7 +12,10 @@ public abstract class Plugin {
 
     JSONObject properties;
     Config config;
-    JSONObject conf;
+    JSONObject jsonConfig;
+    static final String TYPE_CLASS = "class";
+    static final String TYPE_INTERFACE = "interface";
+
     public void plugin() throws Exception {
         pluginJavaModel(config.getTableInfoList());
         pluginJavaMapper(config.getTableInfoList());
@@ -35,9 +38,9 @@ public abstract class Plugin {
     }
     public void setConfig(Config config) {
         this.config = config;
-        conf = config.getJsonConfig();
+        jsonConfig = config.getJsonConfig();
     }
-    public GenerateFile getGenerateFileByFileType(TableInfo tableInfo, FileTypeEnum type) {
+    GenerateFile getGenerateFileByFileType(TableInfo tableInfo, FileTypeEnum type) {
         List<GenerateFile<?>> generateFileList = tableInfo.getGenerateFiles();
         for (GenerateFile<?> generateFile : generateFileList) {
             if (generateFile.getType() == type) {

@@ -7,7 +7,6 @@ package com.zbss.code.generator.file;
  */
 public abstract class GenerateFile<T> {
 
-
     String targetProject;
     String targetPackage;
     String name;
@@ -19,7 +18,7 @@ public abstract class GenerateFile<T> {
     abstract String convertDataToContent(T data);
 
     public String getContent() {
-        content = convertDataToContent(data);
+        content = content == null || content.equals("") ? convertDataToContent(data) : content;
         return content;
     }
 

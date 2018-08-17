@@ -6,11 +6,12 @@
     "pwd": "root"
   },
   "outputFileEncoding": "utf-8",
-  "isXmlMerge": false,
+  "isXmlMerge": true,
   "isJavaMerge": true,
   "autoDelimitKeywords": false,
   "beginningDelimiter": "`",
   "endingDelimiter": "`",
+  "merger": "",
   "model": {
     "targetPackage": "com.zbss.model",
     "targetProject": "test",

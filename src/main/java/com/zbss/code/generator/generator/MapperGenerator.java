@@ -17,15 +17,13 @@ public class MapperGenerator extends FileGenerator {
 
     @Override
     public void generateFile() throws Exception {
-        String targetPkg = config.getJsonConfig().getJSONObject("mapper").getString("targetPackage");
-        String targetPrj = config.getJsonConfig().getJSONObject("mapper").getString("targetProject");
+        String targetPkg = jsonConfig.getJSONObject("mapper").getString("targetPackage");
+        String targetPrj = jsonConfig.getJSONObject("mapper").getString("targetProject");
         for (TableInfo tableInfo : config.getTableInfoList()) {
             CompilationUnit cu = new CompilationUnit();
+            cu.setPackageDeclaration(targetPkg);
 
-            String pkg = jsonConfig.getJSONObject("model").getString("targetPackage");
-            cu.setPackageDeclaration(pkg);
-
-            String sf = config.getJsonConfig().getJSONObject("mapper").getJSONObject("properties").getString("suffix");
+            String sf = jsonConfig.getJSONObject("mapper").getJSONObject("properties").getString("suffix");
             String suffix = StringUtils.isEmpty(sf) ? Const.MAPPER : sf;
             String typeName = tableInfo.getDomainName() + suffix;
             tableInfo.setMapperName(typeName);
