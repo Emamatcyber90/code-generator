@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zbss.code.generator.jdbc.Jdbc;
 import com.zbss.code.generator.plugins.Plugin;
-import com.zbss.code.generator.table.TableColumn;
-import com.zbss.code.generator.table.TableInfo;
+import com.zbss.code.generator.entity.TableColumn;
+import com.zbss.code.generator.entity.TableInfo;
 import com.zbss.code.generator.util.FileUtils;
 import com.zbss.code.generator.util.StringUtils;
 import com.zbss.code.generator.util.Utils;
@@ -71,12 +71,6 @@ public class Config {
             }
 
             TableInfo tableInfo = new TableInfo();
-            tableInfo.setModelConfig(config.getJSONObject("model"));
-            tableInfo.setMapperConfig(config.getJSONObject("mapper"));
-            tableInfo.setXmlConfig(config.getJSONObject("xml"));
-            tableInfo.setServiceConfig(config.getJSONObject("service"));
-            tableInfo.setServiceImplConfig(config.getJSONObject("serviceImpl"));
-            tableInfo.setControllerConfig(config.getJSONObject("controller"));
             tableInfo.setActualName(tableName);
             tableInfo.setDomainName(domainName);
             tableInfo.setConfig(this);

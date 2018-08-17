@@ -1,4 +1,4 @@
-package com.zbss.code.generator.table;
+package com.zbss.code.generator.entity;
 
 import com.alibaba.fastjson.JSON;
 

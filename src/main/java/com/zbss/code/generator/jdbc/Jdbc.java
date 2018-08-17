@@ -82,16 +82,13 @@ public class Jdbc {
     }
 
     public static Jdbc getInstance(Config config) {
-        if (instance == null) {
-            synchronized (Jdbc.class) {
-                if (instance == null) {
-                    JSONObject conf = config.getConfig();
-                    JSONObject jdbcObj = conf.getJSONObject("jdbc");
-                    return new Jdbc(jdbcObj.getString("driver"), jdbcObj.getString("url"), jdbcObj.getString("user"), jdbcObj.getString("pwd"));
-                }
-            }
-        }
-        return instance;
+        JSONObject conf = config.getConfig();
+        JSONObject jdbcObj = conf.getJSONObject("jdbc");
+        String driver = jdbcObj.getString("driver");
+        String url = jdbcObj.getString("url");
+        String user = jdbcObj.getString("user");
+        String pwd = jdbcObj.getString("pwd");
+        return getInstance(driver, url, user, pwd);
     }
 
     public Connection getConnection() {

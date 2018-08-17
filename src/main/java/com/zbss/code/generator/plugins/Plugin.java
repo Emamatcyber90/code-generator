@@ -2,7 +2,9 @@ package com.zbss.code.generator.plugins;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zbss.code.generator.config.Config;
-import com.zbss.code.generator.table.TableInfo;
+import com.zbss.code.generator.entity.TableInfo;
+import com.zbss.code.generator.file.FileTypeEnum;
+import com.zbss.code.generator.file.GenerateFile;
 
 import java.util.List;
 import java.util.Map;
@@ -28,4 +30,14 @@ public abstract class Plugin {
         this.config = config;
         conf = config.getConfig();
     }
+    public GenerateFile getGenerateFileByFileType(TableInfo tableInfo, FileTypeEnum type) {
+        List<GenerateFile<?>> generateFileList = tableInfo.getGenerateFiles();
+        for (GenerateFile<?> generateFile : generateFileList) {
+            if (generateFile.getType() == type) {
+                return generateFile;
+            }
+        }
+        return null;
+    }
+
 }

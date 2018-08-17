@@ -2,15 +2,15 @@ package com.zbss.code.generator.generator;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zbss.code.generator.config.Config;
+import com.zbss.code.generator.entity.TableInfo;
+import com.zbss.code.generator.file.FileTypeEnum;
+import com.zbss.code.generator.file.GenerateFile;
 import com.zbss.code.generator.plugins.Plugin;
+import com.zbss.code.generator.util.FileUtils;
 import com.zbss.code.generator.util.ObjectUtils;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * @author zbss
@@ -51,45 +51,17 @@ public abstract class Generator {
         }
     }
 
-    File getDirectory(String targetProject, String targetPackage) throws Exception {
-        File project = new File(targetProject);
-        if (!project.isDirectory()) {
-            boolean rc = project.mkdirs();
-            if (!rc) {
-                throw new Exception("create targetProject dir failed !");
+    void executeWrite(FileTypeEnum type) throws Exception {
+        String fileEncoding = ObjectUtils.isEmpty(conf.getString("outputFileEncoding")) ? "utf-8" : conf.getString("outputFileEncoding");
+        for (TableInfo tableInfo : config.getTableInfoList()) {
+            List<GenerateFile<?>> generateFileList = tableInfo.getGenerateFiles();
+            for (GenerateFile<?> generateFile : generateFileList) {
+                if (generateFile.getType() == type) {
+                    File file = new File(FileUtils.getDirectory(generateFile.getTargetProject(), generateFile.getTargetPackage()), generateFile.getName());
+                    FileUtils.writeFile(file, generateFile.getContent(), fileEncoding);
+                }
             }
         }
-
-        StringBuilder sb = new StringBuilder();
-        StringTokenizer st = new StringTokenizer(targetPackage, ".");
-        while (st.hasMoreTokens()) {
-            sb.append(st.nextToken());
-            sb.append(File.separatorChar);
-        }
-
-        File directory = new File(project, sb.toString());
-        if (!directory.isDirectory()) {
-            boolean rc = directory.mkdirs();
-            if (!rc) {
-                throw new Exception("create targetPackage dir failed !");
-            }
-        }
-
-        return directory;
-    }
-
-    void writeFile(File file, String content, String fileEncoding) throws Exception {
-        FileOutputStream fos = new FileOutputStream(file, false);
-        OutputStreamWriter osw;
-        if (fileEncoding == null) {
-            osw = new OutputStreamWriter(fos);
-        } else {
-            osw = new OutputStreamWriter(fos, fileEncoding);
-        }
-
-        BufferedWriter bw = new BufferedWriter(osw);
-        bw.write(content);
-        bw.close();
     }
 
 }

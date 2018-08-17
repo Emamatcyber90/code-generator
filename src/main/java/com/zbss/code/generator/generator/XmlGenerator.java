@@ -1,13 +1,14 @@
 package com.zbss.code.generator.generator;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zbss.code.generator.config.Config;
+import com.zbss.code.generator.entity.TableInfo;
+import com.zbss.code.generator.file.FileTypeEnum;
+import com.zbss.code.generator.file.GenerateFile;
+import com.zbss.code.generator.file.GenerateXmlFile;
 import com.zbss.code.generator.plugins.Plugin;
-import com.zbss.code.generator.table.TableInfo;
 import com.zbss.code.generator.util.DocumentUtils;
-import com.zbss.code.generator.util.ObjectUtils;
 import org.dom4j.Document;
-
-import java.io.File;
 
 /**
  * @author zbss
@@ -16,15 +17,26 @@ import java.io.File;
  */
 public class XmlGenerator extends Generator {
 
+    JSONObject xmlConfig;
+
     public XmlGenerator(Config config) {
         super(config);
+        xmlConfig = config.getConfig().getJSONObject("xml");
     }
 
     @Override
     public void generateFile() throws Exception {
+        String targetPkg = xmlConfig.getString("targetPackage");
+        String targetPrj = xmlConfig.getString("targetProject");
         for (TableInfo tableInfo : config.getTableInfoList()) {
             Document document = DocumentUtils.createDocument();
-            tableInfo.setXmlDocument(document);
+            GenerateFile<Document> generateFile = new GenerateXmlFile<>();
+            generateFile.setTargetProject(targetPrj);
+            generateFile.setTargetPackage(targetPkg);
+            generateFile.setData(document);
+            generateFile.setType(FileTypeEnum.XML);
+            generateFile.setName(tableInfo.getMapperName() + ".xml");
+            tableInfo.getGenerateFiles().add(generateFile);
         }
     }
 
@@ -37,21 +49,7 @@ public class XmlGenerator extends Generator {
 
     @Override
     public void writeFile() throws Exception {
-        String targetPkg = conf.getJSONObject("xml").getString("targetPackage");
-        String targetPrj = conf.getJSONObject("xml").getString("targetProject");
-        File dir = getDirectory(targetPrj, targetPkg);
-
-        for (TableInfo tableInfo : config.getTableInfoList()) {
-            Document doc = tableInfo.getXmlDocument();
-            if (ObjectUtils.isEmpty(doc)) {
-                continue;
-            }
-
-            File targetFile = new File(dir, tableInfo.getMapperName() + ".xml");
-            String fileEncoding = ObjectUtils.isEmpty(conf.getString("outputFileEncoding")) ? "utf-8" : conf.getString("outputFileEncoding");
-            String fileContent = DocumentUtils.convertDocumentToStringWithFormat(doc);
-            writeFile(targetFile, fileContent, fileEncoding);
-        }
+        executeWrite(FileTypeEnum.XML);
     }
 
     @Override

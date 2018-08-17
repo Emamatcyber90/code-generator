@@ -2,6 +2,7 @@ package com.zbss.code.generator.util;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * @author zbss
@@ -54,8 +55,8 @@ public class FileUtils {
     }
 
     /**
-     * @param file 文件路径
-     * @param charset  读取编码
+     * @param file    文件路径
+     * @param charset 读取编码
      * @return
      * @throws IOException
      * @desc 读取文件
@@ -82,19 +83,32 @@ public class FileUtils {
      * @throws IOException
      * @desc 写文件
      */
-    public static void writeFile(String filePath, String content, String charset) throws IOException {
+    public static void writeFile(String filePath, String content, String charset) throws Exception {
         if (charset == null || "".equals(charset)) {
             charset = CHAESET;
         }
         File file = new File(filePath);
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
+        writeFile(file, content, charset);
+    }
+
+    /**
+     * @param file    文件
+     * @param content 内容
+     * @param charset 编码
+     * @throws IOException
+     * @desc 写文件
+     */
+    public static void writeFile(File file, String content, String charset) throws Exception {
+        FileOutputStream fos = new FileOutputStream(file, false);
+        OutputStreamWriter osw;
+        if (charset == null) {
+            osw = new OutputStreamWriter(fos);
+        } else {
+            osw = new OutputStreamWriter(fos, charset);
         }
-        FileOutputStream out = new FileOutputStream(file);
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, charset));
+
+        BufferedWriter bw = new BufferedWriter(osw);
         bw.write(content);
-        bw.flush();
         bw.close();
     }
 
@@ -134,5 +148,40 @@ public class FileUtils {
         p.load(new FileInputStream(filePath));
         return p;
     }
+
+    /**
+     * @param targetProject
+     * @param targetPackage
+     * @return
+     * @throws Exception
+     * @desc 创建文件写入的目录
+     */
+    public static File getDirectory(String targetProject, String targetPackage) throws Exception {
+        File project = new File(targetProject);
+        if (!project.isDirectory()) {
+            boolean rc = project.mkdirs();
+            if (!rc) {
+                throw new Exception("create targetProject dir failed !");
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(targetPackage, ".");
+        while (st.hasMoreTokens()) {
+            sb.append(st.nextToken());
+            sb.append(File.separatorChar);
+        }
+
+        File directory = new File(project, sb.toString());
+        if (!directory.isDirectory()) {
+            boolean rc = directory.mkdirs();
+            if (!rc) {
+                throw new Exception("create targetPackage dir failed !");
+            }
+        }
+
+        return directory;
+    }
+
 
 }

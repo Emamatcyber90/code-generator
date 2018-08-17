@@ -1,8 +1,10 @@
 package com.zbss.code.generator.plugins;
 
 import com.zbss.code.generator.config.Const;
-import com.zbss.code.generator.table.TableColumn;
-import com.zbss.code.generator.table.TableInfo;
+import com.zbss.code.generator.entity.TableColumn;
+import com.zbss.code.generator.entity.TableInfo;
+import com.zbss.code.generator.file.FileTypeEnum;
+import com.zbss.code.generator.file.GenerateFile;
 import com.zbss.code.generator.util.ObjectUtils;
 import com.zbss.code.generator.util.StringUtils;
 import org.dom4j.Document;
@@ -27,17 +29,24 @@ public class MybatisXmlGeneratePlugin extends PluginAdapter {
     }
 
     private void createXmlDocument(TableInfo tableInfo) {
+
+        GenerateFile<Document> generateFile = getGenerateFileByFileType(tableInfo, FileTypeEnum.XML);
+        if (generateFile == null || generateFile.getData() == null) {
+            return;
+        }
+        Document document = generateFile.getData();
+
         DocumentType docType = new DefaultDocumentType();
         docType.setElementName("mapper");
         docType.setPublicID("-//mybatis.org//DTD Mapper 3.0//EN");
         docType.setSystemID(" http://mybatis.org/dtd/mybatis-3-mapper.dtd");
-        Document document = tableInfo.getXmlDocument();
+
         document.setDocType(docType);
         if (ObjectUtils.isEmpty(document)) {
             return;
         }
 
-        String pkg = tableInfo.getModelConfig().getString("targetPackage");
+        String pkg = generateFile.getTargetPackage();
 
         Element mapperEle = document.addElement("mapper");
         mapperEle.addAttribute("namespace", pkg + "." + tableInfo.getMapperName());

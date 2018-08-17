@@ -1,6 +1,6 @@
 package com.zbss.code.generator.plugins;
 
-import com.zbss.code.generator.table.TableInfo;
+import com.zbss.code.generator.entity.TableInfo;
 
 import java.util.List;
 

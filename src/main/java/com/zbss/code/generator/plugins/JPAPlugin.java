@@ -5,8 +5,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
-import com.zbss.code.generator.table.TableColumn;
-import com.zbss.code.generator.table.TableInfo;
+import com.zbss.code.generator.entity.TableColumn;
+import com.zbss.code.generator.entity.TableInfo;
+import com.zbss.code.generator.file.FileTypeEnum;
+import com.zbss.code.generator.file.GenerateFile;
 
 import java.util.List;
 
@@ -26,7 +28,11 @@ public class JPAPlugin extends PluginAdapter {
     }
 
     private void addTableJpaAnnptation(TableInfo tableInfo) {
-        CompilationUnit cu = tableInfo.getModelCompilationUnit();
+        GenerateFile<CompilationUnit> generateFile = getGenerateFileByFileType(tableInfo, FileTypeEnum.MODEL);
+        if (generateFile == null || generateFile.getData() == null) {
+            return;
+        }
+        CompilationUnit cu = generateFile.getData();
         cu.addImport("javax.persistence.*");
         ClassOrInterfaceDeclaration clazz = cu.getClassByName(cu.getType(0).getName().asString()).get();
         AnnotationExpr ae = JavaParser.parseAnnotation("@Table(name = \"" + tableInfo.getActualName() + "\")");
