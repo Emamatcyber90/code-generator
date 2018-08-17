@@ -8,9 +8,13 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.zbss.code.generator.config.Const;
+import com.zbss.code.generator.util.DocumentUtils;
 import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -164,10 +168,29 @@ public class FileMerger implements Merger {
 
     @Override
     public String mergeXmlFile(Document newDoc, Document oldDoc) {
+        Element oldRootEle = oldDoc.getRootElement();
+        Iterator<Element> elementIterator = oldRootEle.elementIterator();
+        while (elementIterator.hasNext()) {
+            Element element = elementIterator.next();
+            Iterator<Node> nodeIterator = element.nodeIterator();
+            boolean hasComment = false;
+            while (nodeIterator.hasNext()) {
+                Node node = nodeIterator.next();
+                if (node.getNodeType() == Node.COMMENT_NODE) {
+                    if (node.asXML().contains(Const.XML_COMMENT)) {
+                        hasComment = true;
+                        break;
+                    }
+                }
+            }
 
-        oldDoc.getRootElement();
+            if (!hasComment) {
+                element.setParent(null);
+                newDoc.getRootElement().add(element);
+            }
+        }
 
-        return null;
+        return DocumentUtils.convertDocumentToStringWithFormat(newDoc);
     }
 
 }

@@ -46,7 +46,7 @@ public class MybatisXmlGeneratePlugin extends PluginAdapter {
             return;
         }
 
-        String pkg = generateFile.getTargetPackage();
+        String pkg = jsonConfig.getJSONObject("model").getString("targetPackage");
 
         Element mapperEle = document.addElement("mapper");
         mapperEle.addAttribute("namespace", pkg + "." + tableInfo.getMapperName());

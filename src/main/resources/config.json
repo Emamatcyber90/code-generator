@@ -1,49 +1,65 @@
 {
+  /*jdbc*/
   "jdbc": {
     "driver": "com.mysql.jdbc.Driver",
     "url": "jdbc:mysql://localhost:3306/travel_qihang_lcc?useUnicode=true&characterEncoding=UTF-8",
     "user": "root",
     "pwd": "root"
   },
+  /*输出文件编码*/
   "outputFileEncoding": "utf-8",
-  "isXmlMerge": true,
+  /*是否合并xml文件*/
+  "isXmlMerge": false,
+  /*是否合并java文件*/
   "isJavaMerge": true,
+  /*是否自动添加sql关键字分界符*/
   "autoDelimitKeywords": false,
+  /*sql分界符开始*/
   "beginningDelimiter": "`",
+  /*sql分界符结束*/
   "endingDelimiter": "`",
+  /*自定义的合并器，需要实现Merger接口*/
   "merger": "",
+  /*实体层配置*/
   "model": {
+    /*包名*/
     "targetPackage": "com.zbss.model",
+    /*存放目录名*/
     "targetProject": "test",
     "properties": {
-      "suffix": ""
     }
   },
+  /*Mapper层配置*/
   "mapper": {
     "targetPackage": "com.zbss.mapper",
     "targetProject": "test",
     "properties": {
+      /*mapper结尾*/
       "suffix": "DAO"
     }
   },
+  /*service层配置*/
   "service": {
     "targetPackage": "com.zbss.service",
     "targetProject": "test",
     "properties": {
     }
   },
+  /*serviceImpl层配置*/
   "serviceImpl": {
     "targetPackage": "com.zbss.service.impl",
     "targetProject": "test",
     "properties": {
     }
   },
+  /*Mapper层配置*/
   "controller": {
     "targetPackage": "com.zbss.controller",
     "targetProject": "test",
     "properties": {
     }
   },
+  /*xml 配置*/
   "xml": {
     "targetPackage": "mapper",
     "targetProject": "test",
@@ -51,9 +67,12 @@
       "suffix": ""
     }
   },
+  /*数据库表格配置*/
   "tables": [
     {
+      /*数据库表名*/
       "tableName": "carrier_ticket_channel",
+      /*实体类，名名*/
       "domainName": "CarrierTicketChannel"
     },
     {
@@ -65,26 +84,31 @@
       "domainName": "FlightBook"
     }
   ],
+  /*生成器配置*/
   "generators": [
     {
+      /*实体生成器*/
       "className": "com.zbss.code.generator.generator.ModelGenerator",
       "order": 0,
       "properties": {
       }
     },
     {
+      /*Mapper生成器*/
       "className": "com.zbss.code.generator.generator.MapperGenerator",
       "order": 1,
       "properties": {
       }
     },
     {
+      /*xml生成器*/
       "className": "com.zbss.code.generator.generator.XmlGenerator",
       "order": 2,
       "properties": {
       }
     }
   ],
+  /*插件*/
   "plugins": [
     {
       "className": "com.zbss.code.generator.plugins.GetterAndSetterPlugin",
