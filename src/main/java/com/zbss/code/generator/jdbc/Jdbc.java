@@ -20,6 +20,7 @@ public class Jdbc {
     private String user;
     private String pwd;
     private Map<AtomicInteger, Connection> connMap = new ConcurrentHashMap<>();
+    private int DAFAULT_POOL_SIZE = 2;
 
     private Jdbc(String driver, String url, String user, String pwd) {
         this.driver = driver;
@@ -32,14 +33,14 @@ public class Jdbc {
     private void init() {
         try {
             Class.forName(driver);
-            initPool(10);
+            initPool(DAFAULT_POOL_SIZE);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void initPool(Integer cap) throws SQLException {
-        int c = (cap != null && cap > 0) ? cap : 10;
+        int c = (cap != null && cap > 0) ? cap : DAFAULT_POOL_SIZE;
         for (int i = 0; i < c; i++) {
             connMap.put(new AtomicInteger(0), DriverManager.getConnection(url, user, pwd));
         }
@@ -82,7 +83,7 @@ public class Jdbc {
     }
 
     public static Jdbc getInstance(Config config) {
-        JSONObject conf = config.getConfig();
+        JSONObject conf = config.getJsonConfig();
         JSONObject jdbcObj = conf.getJSONObject("jdbc");
         String driver = jdbcObj.getString("driver");
         String url = jdbcObj.getString("url");

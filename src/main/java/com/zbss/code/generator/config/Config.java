@@ -3,6 +3,7 @@ package com.zbss.code.generator.config;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zbss.code.generator.generator.FileGenerator;
 import com.zbss.code.generator.jdbc.Jdbc;
 import com.zbss.code.generator.plugins.Plugin;
 import com.zbss.code.generator.entity.TableColumn;
@@ -16,6 +17,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,8 +29,9 @@ import java.util.List;
 public class Config {
 
     private static volatile Config instance;
-    private JSONObject config;
+    private JSONObject jsonConfig;
     private List<Plugin> pluginList = new ArrayList<>();
+    private List<FileGenerator> generatorList = new ArrayList<>();
     private List<TableInfo> tableInfoList = new ArrayList<>();
     private File configFile;
 
@@ -36,6 +40,7 @@ public class Config {
         try {
             initConfig();
             initTable();
+            initGenerator();
             initPlugin();
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,11 +55,11 @@ public class Config {
             configStr = FileUtils.readFile(configFile);
         }
 
-        config = JSON.parseObject(configStr);
+        jsonConfig = JSON.parseObject(configStr);
     }
 
     private void initTable() throws Exception {
-        JSONArray tables = config.getJSONArray("tables");
+        JSONArray tables = jsonConfig.getJSONArray("tables");
         Jdbc jdbc = Jdbc.getInstance(this);
         Connection conn = jdbc.getConnection();
         DatabaseMetaData databaseMetaData = conn.getMetaData();
@@ -99,8 +104,16 @@ public class Config {
     }
 
     private void initPlugin() throws Exception {
-        JSONArray pluginArr = config.getJSONArray("plugins");
+        JSONArray pluginArr = jsonConfig.getJSONArray("plugins");
         if (pluginArr != null && !pluginArr.isEmpty()) {
+            Collections.sort(pluginArr, new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    JSONObject j1 = JSON.parseObject(JSON.toJSONString(o1));
+                    JSONObject j2 = JSON.parseObject(JSON.toJSONString(o2));
+                    return j1.getInteger("order") - j2.getInteger("order");
+                }
+            });
             for (int i = 0; i < pluginArr.size(); i++) {
                 JSONObject pluginObj = pluginArr.getJSONObject(i);
                 String className = pluginObj.getString("className");
@@ -117,8 +130,35 @@ public class Config {
         }
     }
 
-    public JSONObject getConfig() {
-         return config;
+    private void initGenerator() throws Exception {
+        JSONArray generators = jsonConfig.getJSONArray("generators");
+        if (generators != null && !generators.isEmpty()) {
+            Collections.sort(generators, new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    JSONObject j1 = JSON.parseObject(JSON.toJSONString(o1));
+                    JSONObject j2 = JSON.parseObject(JSON.toJSONString(o2));
+                    return j1.getInteger("order") - j2.getInteger("order");
+                }
+            });
+            for (int i = 0; i < generators.size(); i++) {
+                JSONObject generatorObj = generators.getJSONObject(i);
+                String className = generatorObj.getString("className");
+                if (StringUtils.isNotEmpty(className)) {
+                    JSONObject pros = generatorObj.getJSONObject("properties");
+                    FileGenerator fileGenerator = (FileGenerator) Class.forName(className).newInstance();
+                    if (pros != null) {
+                        fileGenerator.setProperties(pros);
+                    }
+                    fileGenerator.setConfig(this);
+                    generatorList.add(fileGenerator);
+                }
+            }
+        }
+    }
+
+    public JSONObject getJsonConfig() {
+         return jsonConfig;
     }
 
     public List<Plugin> getPluginList() {
@@ -127,6 +167,14 @@ public class Config {
 
     public List<TableInfo> getTableInfoList() {
         return tableInfoList;
+    }
+
+    public List<FileGenerator> getGeneratorList() {
+        return generatorList;
+    }
+
+    public void setGeneratorList(List<FileGenerator> generatorList) {
+        this.generatorList = generatorList;
     }
 
     public static Config getInstance(File file) {

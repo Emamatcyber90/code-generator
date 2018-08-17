@@ -1,21 +1,15 @@
 package com.zbss.code.generator.generator;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.zbss.code.generator.config.Config;
 import com.zbss.code.generator.config.Const;
+import com.zbss.code.generator.entity.TableColumn;
+import com.zbss.code.generator.entity.TableInfo;
 import com.zbss.code.generator.file.FileTypeEnum;
 import com.zbss.code.generator.file.GenerateFile;
 import com.zbss.code.generator.file.GenerateModelFile;
-import com.zbss.code.generator.plugins.Plugin;
-import com.zbss.code.generator.entity.TableColumn;
-import com.zbss.code.generator.entity.TableInfo;
-import com.zbss.code.generator.util.FileUtils;
-import com.zbss.code.generator.util.ObjectUtils;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -23,22 +17,15 @@ import java.util.List;
  * @desc
  * @date 2018/8/15 13:30
  */
-public class JavaModelGenerator extends Generator {
-
-    private JSONObject modelConfig;
-
-    public JavaModelGenerator(Config config) {
-        super(config);
-        modelConfig = config.getConfig().getJSONObject("model");
-    }
+public class ModelGenerator extends FileGenerator {
 
     @Override
     public void generateFile() throws Exception {
-        String targetPkg = modelConfig.getString("targetPackage");
-        String targetPrj = modelConfig.getString("targetProject");
+        String targetPkg = config.getJsonConfig().getJSONObject("model").getString("targetPackage");
+        String targetPrj = config.getJsonConfig().getJSONObject("model").getString("targetProject");
         for (TableInfo tableInfo : config.getTableInfoList()) {
             CompilationUnit cu = new CompilationUnit();
-            String pkg = conf.getJSONObject("model").getString("targetPackage");
+            String pkg = jsonConfig.getJSONObject("model").getString("targetPackage");
             cu.setPackageDeclaration(pkg);
             ClassOrInterfaceDeclaration type = cu.addClass(tableInfo.getDomainName());
             List<TableColumn> columnList = tableInfo.getActualColumns();
@@ -54,24 +41,8 @@ public class JavaModelGenerator extends Generator {
             generateFile.setTargetPackage(targetPkg);
             generateFile.setName(tableInfo.getDomainName() + ".java");
             generateFile.setType(FileTypeEnum.MODEL);
+            generateFile.setFlag(FileTypeEnum.FLAG_JAVA);
             tableInfo.getGenerateFiles().add(generateFile);
         }
-    }
-
-    @Override
-    public void mergeFile() throws Exception {
-        if (!conf.getBoolean("isJavaMerge")) {
-            return;
-        }
-    }
-
-    @Override
-    public void writeFile() throws Exception {
-        executeWrite(FileTypeEnum.MODEL);
-    }
-
-    @Override
-    public void executePlugin(Plugin plugin) {
-        plugin.pluginJavaModel(config.getTableInfoList());
     }
 }

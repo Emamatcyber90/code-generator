@@ -21,14 +21,13 @@ public class CommentPlugin extends PluginAdapter {
 
     @Override
     public void pluginJavaModel(List<TableInfo> tableInfoList) {
-        System.out.println("添加注释");
         for (TableInfo tableInfo : tableInfoList) {
-            addComment(tableInfo);
+            addComment(tableInfo, FileTypeEnum.MODEL);
         }
     }
 
-    private void addComment(TableInfo tableInfo) {
-        GenerateFile<CompilationUnit> generateFile = getGenerateFileByFileType(tableInfo, FileTypeEnum.MODEL);
+    private void addComment(TableInfo tableInfo, FileTypeEnum type) {
+        GenerateFile<CompilationUnit> generateFile = getGenerateFileByFileType(tableInfo, type);
         if (generateFile == null || generateFile.getData() == null) {
             return;
         }

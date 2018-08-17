@@ -13,18 +13,42 @@
   "endingDelimiter": "`",
   "model": {
     "targetPackage": "com.zbss.model",
-    "targetProject":"test"
+    "targetProject": "test",
+    "properties": {
+      "suffix": ""
+    }
   },
   "mapper": {
     "targetPackage": "com.zbss.mapper",
-    "targetProject":"test",
-    "properties":{
-      "suffix":""
+    "targetProject": "test",
+    "properties": {
+      "suffix": "DAO"
+    }
+  },
+  "service": {
+    "targetPackage": "com.zbss.service",
+    "targetProject": "test",
+    "properties": {
+    }
+  },
+  "serviceImpl": {
+    "targetPackage": "com.zbss.service.impl",
+    "targetProject": "test",
+    "properties": {
+    }
+  },
+  "controller": {
+    "targetPackage": "com.zbss.controller",
+    "targetProject": "test",
+    "properties": {
     }
   },
   "xml": {
     "targetPackage": "mapper",
-    "targetProject":"test"
+    "targetProject": "test",
+    "properties": {
+      "suffix": ""
+    }
   },
   "tables": [
     {
@@ -34,35 +58,64 @@
     {
       "tableName": "config_airline",
       "domainName": "ConfigAirline"
+    },
+    {
+      "tableName": "flight_book",
+      "domainName": "FlightBook"
+    }
+  ],
+  "generators": [
+    {
+      "className": "com.zbss.code.generator.generator.ModelGenerator",
+      "order": 0,
+      "properties": {
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.generator.MapperGenerator",
+      "order": 1,
+      "properties": {
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.generator.XmlGenerator",
+      "order": 2,
+      "properties": {
+      }
     }
   ],
   "plugins": [
     {
-      "className": "com.zbss.code.generator.plugins.MybatisXmlGeneratePlugin",
-      "properties": {
-        "hello": "123"
-      }
-    },
-    {
       "className": "com.zbss.code.generator.plugins.GetterAndSetterPlugin",
-      "properties": {
-        "hello": "123"
-      }
-    },
-    {
-      "className": "com.zbss.code.generator.plugins.CommentPlugin",
+      "order": 0,
       "properties": {
         "hello": "123"
       }
     },
     {
       "className": "com.zbss.code.generator.plugins.JPAPlugin",
+      "order": 1,
       "properties": {
         "hello": "123"
       }
     },
     {
       "className": "com.zbss.code.generator.plugins.CommonMapperPlugin",
+      "order": 2,
+      "properties": {
+        "hello": "123"
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.plugins.MybatisXmlGeneratePlugin",
+      "order": 3,
+      "properties": {
+        "hello": "123"
+      }
+    },
+    {
+      "className": "com.zbss.code.generator.plugins.CommentPlugin",
+      "order": 9999,
       "properties": {
         "hello": "123"
       }

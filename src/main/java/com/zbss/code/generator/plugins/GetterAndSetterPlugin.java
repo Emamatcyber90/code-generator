@@ -23,7 +23,6 @@ public class GetterAndSetterPlugin extends PluginAdapter {
 
     @Override
     public void pluginJavaModel(List<TableInfo> tableInfoList) {
-        System.out.println("Getter and Setter");
         for (TableInfo tableInfo : tableInfoList) {
             addGetterAndSetter(tableInfo);
         }

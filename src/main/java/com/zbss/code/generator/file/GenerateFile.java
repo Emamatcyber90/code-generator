@@ -13,6 +13,7 @@ public abstract class GenerateFile<T> {
     String name;
     String content;
     FileTypeEnum type;
+    FileTypeEnum flag;
     T data;
 
     abstract String convertDataToContent(T data);
@@ -64,5 +65,13 @@ public abstract class GenerateFile<T> {
 
     public void setTargetPackage(String targetPackage) {
         this.targetPackage = targetPackage;
+    }
+
+    public FileTypeEnum getFlag() {
+        return flag;
+    }
+
+    public void setFlag(FileTypeEnum flag) {
+        this.flag = flag;
     }
 }

@@ -7,13 +7,20 @@ import com.zbss.code.generator.file.FileTypeEnum;
 import com.zbss.code.generator.file.GenerateFile;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class Plugin {
 
-    Map<String, Object> properties;
+    JSONObject properties;
     Config config;
     JSONObject conf;
+    public void plugin() throws Exception {
+        pluginJavaModel(config.getTableInfoList());
+        pluginJavaMapper(config.getTableInfoList());
+        pluginXml(config.getTableInfoList());
+        pluginJavaService(config.getTableInfoList());
+        pluginJavaServiceImpl(config.getTableInfoList());
+        pluginJavaController(config.getTableInfoList());
+    }
 
     // 插件增强
     public abstract void pluginJavaModel(List<TableInfo> tableInfoList);
@@ -23,12 +30,12 @@ public abstract class Plugin {
     public abstract void pluginJavaService(List<TableInfo> tableInfoList);
     public abstract void pluginJavaServiceImpl(List<TableInfo> tableInfoList);
 
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(JSONObject properties) {
         this.properties = properties;
     }
     public void setConfig(Config config) {
         this.config = config;
-        conf = config.getConfig();
+        conf = config.getJsonConfig();
     }
     public GenerateFile getGenerateFileByFileType(TableInfo tableInfo, FileTypeEnum type) {
         List<GenerateFile<?>> generateFileList = tableInfo.getGenerateFiles();

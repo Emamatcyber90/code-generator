@@ -7,6 +7,8 @@ public enum  FileTypeEnum {
     SERVICE(4),
     SERVICEIMPL(5),
     CONTROLLER(6),
+    FLAG_JAVA(-1),
+    FLAG_XML(-2),
     ;
 
     int val;

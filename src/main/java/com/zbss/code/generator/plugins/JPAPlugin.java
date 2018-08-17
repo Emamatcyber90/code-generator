@@ -21,7 +21,6 @@ public class JPAPlugin extends PluginAdapter {
 
     @Override
     public void pluginJavaModel(List<TableInfo> tableInfoList) {
-        System.out.println("添加JPA注解");
         for (TableInfo tableInfo : tableInfoList) {
             addTableJpaAnnptation(tableInfo);
         }
